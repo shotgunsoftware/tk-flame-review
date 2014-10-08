@@ -34,6 +34,9 @@ class FlameReview(Application):
         # register our desired interaction with flame hooks
         menu_caption = self.get_setting("menu_name")
         
+        # track the comments entered by the user
+        self._review_comments = ""
+        
         # set up callbacks for the engine to trigger 
         # when this profile is being triggered 
         callbacks = {}
@@ -62,14 +65,29 @@ class FlameReview(Application):
                      - abort: Pass True back to flame if you want to abort
                      - abortMessage: Abort message to feed back to client
         """
-        # populate the host to use for the export. Currently hard coded to local
-        info["destinationHost"] = "localhost"
-        # set the (temp) location where media is being output prior to upload.
-        info["destinationPath"] = self.execute_hook_method("settings_hook", "get_target_location")
-        # pick up the xml export profile from the configuration
-        info["presetPath"] = self.execute_hook_method("settings_hook", "get_export_preset")
-
-        self.log_debug("%s: Starting custom export session with preset '%s'" % (self, info["presetPath"]))
+        from PySide import QtGui, QtCore
+        
+        # pop up a UI asking the user for description
+        submit_dialog = self.import_module("submit_dialog")               
+        (return_code, widget) = self.engine.show_modal("Submit to Shotgun", self, submit_dialog.Dialog)
+        
+        if return_code == QtGui.QDialog.Rejected:
+            # user pressed cancel
+            info["abort"] = True
+            info["abortMessage"] = "User cancelled the operation."
+        
+        else:
+            # get comments from user
+            self._review_comments = widget.get_comments()
+            
+            # populate the host to use for the export. Currently hard coded to local
+            info["destinationHost"] = "localhost"
+            # set the (temp) location where media is being output prior to upload.
+            info["destinationPath"] = self.execute_hook_method("settings_hook", "get_target_location")
+            # pick up the xml export profile from the configuration
+            info["presetPath"] = self.execute_hook_method("settings_hook", "get_export_preset")
+    
+            self.log_debug("%s: Starting custom export session with preset '%s'" % (self, info["presetPath"]))
                 
     def adjust_path(self, session_id, info):
         """
@@ -176,7 +194,7 @@ class FlameReview(Application):
         
         # set up the arguments which we will pass (via backburner) to 
         # the target method which gets executed
-        args = {"info": info}
+        args = {"info": info, "comments": self._review_comments}
         
         # and populate UI params
         backburner_job_title = "Sequence '%s' - Uploading media to Shotgun" % info.get("sequenceName")
@@ -190,7 +208,7 @@ class FlameReview(Application):
                                                 "populate_shotgun",
                                                 args)
         
-    def populate_shotgun(self, info):
+    def populate_shotgun(self, info, comments):
         """
         This metod is called via backburner and therefore runs in the background.
         It does all the heavy lifting in the app:
@@ -228,6 +246,8 @@ class FlameReview(Application):
            versionName:     Current version name of export (Empty if unversioned).
            versionNumber:   Current version number of export (0 if unversioned).
 
+        :param comments: Review comments entered by the user.
+         
         """ 
         
         # create version
@@ -272,7 +292,7 @@ class FlameReview(Application):
         
         data = {}
         data["code"] = title
-        data["description"] = "Coming soon!"
+        data["description"] = comments
         data["project"] = self.context.project
         data["entity"] = sg_sequence_data
         data["created_by"] = sgtk.util.get_current_user(self.sgtk)

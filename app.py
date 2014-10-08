@@ -275,7 +275,7 @@ class FlameReview(Application):
             task_template_name = self.get_setting("task_template")
             task_template = None
             if task_template_name: 
-                task_template = sg.find_one("TaskTemplate", [["code", "is", task_template_name]])
+                task_template = self.shotgun.find_one("TaskTemplate", [["code", "is", task_template_name]])
                 if not task_template:
                     raise TankError("The task template '%s' specified in the task_template setting "
                                     "does not exist!" % task_template_name)

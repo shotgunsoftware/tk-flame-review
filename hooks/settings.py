@@ -133,7 +133,7 @@ class ExportSettings(HookBaseClass):
    <comment>Creates an 8-bit QuickTime file (H.264 1280x720 8Mbits).</comment>
    <movie>
       <fileType>QuickTime</fileType>
-      <namePattern>&lt;name&gt;</namePattern>
+      <namePattern></namePattern>
       <yuvHeadroom>False</yuvHeadroom>
       <yuvColourSpace>PCS_UNKNOWN</yuvColourSpace>
       <operationalPattern>None</operationalPattern>
@@ -145,7 +145,7 @@ class ExportSettings(HookBaseClass):
       <fileType>QuickTime</fileType>
       <codec>33622016</codec>
       <codecProfile>{CODE_PROFILE_PATH}</codecProfile>
-      <namePattern>&lt;name&gt;</namePattern>
+      <namePattern></namePattern>
       <compressionQuality>50</compressionQuality>
       <transferCharacteristic>2</transferCharacteristic>
       <colorimetricSpecification>4</colorimetricSpecification>
@@ -169,7 +169,7 @@ class ExportSettings(HookBaseClass):
       <fileType>QuickTime</fileType>
       <codec>4026793986</codec>
       <codecProfile />
-      <namePattern>&lt;name&gt;</namePattern>
+      <namePattern></namePattern>
       <mixdown>AsIs</mixdown>
       <sampleRate>48000</sampleRate>
       <bitRate>128</bitRate>

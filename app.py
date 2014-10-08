@@ -16,7 +16,7 @@ import os
 import sys
 import uuid
 import sgtk
-import platform
+from sgtk import TankError
 
 from sgtk.platform import Application
 
@@ -230,15 +230,25 @@ class FlameReview(Application):
 
         """ 
         
-        sequence_name = info["sequenceName"]
+        # create version
+        full_path = os.path.join(info["destinationPath"], info["resolvedPath"])
+
+        if not os.path.exists(full_path):
+            raise TankError("Cannot find quicktime '%s'! Aborting upload." % full_path)
         
-        # first, ensure that the sequence exists in Shotgun
+        self.log_debug("Begin shotgun processing for %s..." % full_path)
+        self.log_debug("File size is %s bytes." % os.path.getsize(full_path))
+                
+        # ensure that the sequence exists in Shotgun
+        sequence_name = info["sequenceName"]
+
         sg_sequence_data = self.shotgun.find_one("Sequence", [["code", "is", sequence_name],
                                                               ["project", "is", self.context.project]]) 
         
         if not sg_sequence_data:    
             # Create a new sequence in Shotgun
             # First see if we should assign a task template
+            self.log_debug("Creating a new sequence in Shotgun...")
             sequence_task_template_name = self.get_setting("sequence_task_template")
             sequence_template = None
             if sequence_task_template_name: 
@@ -252,9 +262,9 @@ class FlameReview(Application):
                                                     "task_template": sequence_template,
                                                     "project": self.context.project})
 
-        # create version
-        full_path = os.path.join(info["destinationPath"], info["resolvedPath"])
-        
+        self.log_debug("Will associate upload with sequence %s..." % sg_sequence_data)
+
+        # create a version in Shotgun
         if info["versionNumber"] != 0:
             title = "%s v%03d" % (info["sequenceName"], info["versionNumber"])
         else:
@@ -268,7 +278,19 @@ class FlameReview(Application):
         data["created_by"] = sgtk.util.get_current_user(self.sgtk)
         sg_version_data = self.shotgun.create("Version", data)
         
-        self.log_debug("Uploading quicktime to shotgun version %s" % sg_version_data)
+        self.log_debug("Created a version in Shotgun: %s" % sg_version_data)
+        
+        # upload quicktime to Shotgun
+        self.log_debug("Begin upload of quicktime to shotgun...")
         self.shotgun.upload("Version", sg_version_data["id"], full_path, "sg_uploaded_movie")
+        self.log_debug("Upload complete!")
         
-        
+        # clean up
+        try:
+            self.log_debug("Trying to remove temporary quicktime file...")
+            os.remove(full_path)
+            self.log_debug("Temporary quicktime file successfully deleted.")
+        except Exception, e:
+            self.log_warning("Could not remove temporary file '%s': %s" % (full_path, e))
+            
+            

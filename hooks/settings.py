@@ -8,9 +8,6 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-"""
-Hook that handles logic and automation around automatic Flame project setup 
-"""
 import sgtk
 from sgtk import TankError
 import os
@@ -20,33 +17,70 @@ HookBaseClass = sgtk.get_hook_baseclass()
 
 class ExportSettings(HookBaseClass):
     """
+    This hook controls the settings that flame will use when it exports the quicktimes 
+    prior to uploading them to Shotgun. It also lets a user control where on disk temporary
+    quicktime files will be located.
     """
+
+    def get_export_preset(self):
+        """
+        Return the path to a flame export preset that should be used when generating 
+        a sequence quicktime.
+        
+        :returns: Path on disk to flame export preset 
+        """
+        return self._generate_profile_xml()
+
+    def get_target_location(self):
+        """
+        Return the folder on disk where temporary quicktimes should be stored.
+        These quicktimes will be automatically removed once they have been
+        uploaded to shotgun.
+        
+        :returns: A directory on disk  
+        """
+        return "/tmp"
+
+
+    ###############################################################################################
+    # helper methods and internals
     
     def _write_content_to_file(self, content, file_name):
         """
-        Write content to file and return the path to a temporary location
-        """
-        file_path = os.path.join(self.parent.cache_location, self.parent.instance_name, file_name)
+        Helper method. Writes content to file and returns the path.
+        The content will be written to the app specific cache location 
+        on disk, organized by app instance name. The rationale is that 
+        each app instance holds its own configuration, and the configuration
+        generates one set of unique xml files.
         
+        :param content: Data to write to the file
+        :param file_name: The name of the file to create
+        :returns: path to the created file
+        """
+        # determine location
+        file_path = os.path.join(self.parent.cache_location, self.parent.instance_name, file_name)
         folder = os.path.dirname(file_path)
 
+        # create folders
         if not os.path.exists(folder):
             old_umask = os.umask(0)
             os.makedirs(folder, 0777)
             os.umask(old_umask)
         
+        # write data
         fh = open(file_path, "wt")
         fh.write(content)
         fh.close()
         
         self.parent.log_debug("Wrote temporary file '%s'" % file_path)
-        
         return file_path
         
     def _generate_quicktime_settings(self):
         """
         Generate quicktime codec presets and return the path to 
-        the generated file
+        the generated file.
+        
+        :returns: path to quicktime codec presets (.cdxprof) xml file
         """ 
 
         xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -82,11 +116,14 @@ class ExportSettings(HookBaseClass):
         """
         
         path = self._write_content_to_file(xml, "quicktime_settings.cdxprof")
-        
         return path
     
     def _generate_profile_xml(self):
         """
+        Generate flame export profile settings suitable for generating a single quicktime 
+        file to represent an entire sequence.
+        
+        :returns: path to export preset xml file
         """
         
         
@@ -135,25 +172,12 @@ class ExportSettings(HookBaseClass):
    </name>
 </preset>        
         """
-        
         # first generate the quicktime presets and bind this up to the content above
         quicktime_settings_path = self._generate_quicktime_settings()
-        
+        # plug in the path to the quicktime preset
         resolved_xml = xml.replace("{CODE_PROFILE_PATH}", quicktime_settings_path)
-        
+        # write it to disk
         preset_path = self._write_content_to_file(resolved_xml, "export_preset.xml")
         
         return preset_path
         
-    def get_export_preset(self):
-        """
-        Returns the path on disk to an export preset to use
-        """
-        
-        return self._generate_profile_xml()
-
-    def get_target_location(self):
-        """
-        Path where quicktimes are exported
-        """
-        return "/tmp"

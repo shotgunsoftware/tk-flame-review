@@ -197,7 +197,9 @@ class FlameReview(Application):
         args = {"info": info, "comments": self._review_comments}
         
         # and populate UI params
-        backburner_job_title = "Sequence '%s' - Uploading media to Shotgun" % info.get("sequenceName")
+        
+        backburner_job_title = "%s '%s' - Uploading media to Shotgun" % (self.get_setting("shotgun_entity_type"), 
+                                                                         info.get("sequenceName"))
         backburner_job_desc = "Creates a new version record in Shotgun and uploads the associated Quicktime."        
         
         # kick off async job
@@ -259,30 +261,31 @@ class FlameReview(Application):
         self.log_debug("Begin shotgun processing for %s..." % full_path)
         self.log_debug("File size is %s bytes." % os.path.getsize(full_path))
                 
-        # ensure that the sequence exists in Shotgun
-        sequence_name = info["sequenceName"]
+        # ensure that the entity exists in Shotgun
+        entity_name = info["sequenceName"]
+        entity_type = self.get_setting("shotgun_entity_type")
 
-        sg_sequence_data = self.shotgun.find_one("Sequence", [["code", "is", sequence_name],
-                                                              ["project", "is", self.context.project]]) 
+        sg_data = self.shotgun.find_one(entity_type, [["code", "is", entity_name], 
+                                                      ["project", "is", self.context.project]]) 
         
-        if not sg_sequence_data:    
-            # Create a new sequence in Shotgun
+        if not sg_data:    
+            # Create a new item in Shotgun
             # First see if we should assign a task template
-            self.log_debug("Creating a new sequence in Shotgun...")
-            sequence_task_template_name = self.get_setting("sequence_task_template")
-            sequence_template = None
-            if sequence_task_template_name: 
-                sequence_template = sg.find_one("TaskTemplate", [["code", "is", sequence_task_template_name]])
-                if not sequence_template:
-                    raise TankError("The task template '%s' specified in the sequence_task_template setting "
-                                    "does not exist!" % sequence_task_template_name)
+            self.log_debug("Creating a new item in Shotgun...")
+            task_template_name = self.get_setting("task_template")
+            task_template = None
+            if task_template_name: 
+                task_template = sg.find_one("TaskTemplate", [["code", "is", task_template_name]])
+                if not task_template:
+                    raise TankError("The task template '%s' specified in the task_template setting "
+                                    "does not exist!" % task_template_name)
                 
-            sg_sequence_data = self.shotgun.create("Sequence", {"code": sequence_name, 
-                                                    "description": "Created by the Shotgun Toolkit Flame integration.",
-                                                    "task_template": sequence_template,
-                                                    "project": self.context.project})
+            sg_data = self.shotgun.create(entity_type, {"code": entity_name, 
+                                                        "description": "Created by the Shotgun Flame integration.",
+                                                        "task_template": task_template,
+                                                        "project": self.context.project})
 
-        self.log_debug("Will associate upload with sequence %s..." % sg_sequence_data)
+        self.log_debug("Will associate upload with shotgun entity %s..." % sg_data)
 
         # create a version in Shotgun
         if info["versionNumber"] != 0:
@@ -294,7 +297,7 @@ class FlameReview(Application):
         data["code"] = title
         data["description"] = comments
         data["project"] = self.context.project
-        data["entity"] = sg_sequence_data
+        data["entity"] = sg_data
         data["created_by"] = sgtk.util.get_current_user(self.sgtk)
         sg_version_data = self.shotgun.create("Version", data)
         

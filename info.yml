@@ -18,9 +18,14 @@ configuration:
         description: One line description of this profile. This will appear on the menu in Flame.
         default_value: "Submit for Shotgun review"
                      
-    sequence_task_template:
+    shotgun_entity_type:
         type: str
-        description: The Shotgun task template to assign to new sequences created
+        description: The entity type in Shotgun to associate a Flame export with.
+        default_value: "Sequence"
+    
+    task_template:
+        type: str
+        description: The Shotgun task template to assign to new shotgun entities or blank if none.
         default_value: ""
 
     settings_hook:

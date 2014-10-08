@@ -138,8 +138,8 @@ class ExportSettings(HookBaseClass):
       <yuvColourSpace>PCS_UNKNOWN</yuvColourSpace>
       <operationalPattern>None</operationalPattern>
       <companyName>Autodesk</companyName>
-      <productName />
-      <versionName />
+      <productName>Smoke</productName>
+      <versionName>2015.2.pr99</versionName>
    </movie>
    <video>
       <fileType>QuickTime</fileType>
@@ -165,12 +165,22 @@ class ExportSettings(HookBaseClass):
          <scanFormat>P</scanFormat>
       </resize>
    </video>
+   <audio>
+      <fileType>QuickTime</fileType>
+      <codec>4026793986</codec>
+      <codecProfile />
+      <namePattern>&lt;name&gt;</namePattern>
+      <mixdown>AsIs</mixdown>
+      <sampleRate>48000</sampleRate>
+      <bitRate>128</bitRate>
+      <bitDepth>-1</bitDepth>
+   </audio>
    <name>
       <framePadding>8</framePadding>
       <startFrame>0</startFrame>
       <useTimecode>False</useTimecode>
    </name>
-</preset>        
+</preset>
         """
         # first generate the quicktime presets and bind this up to the content above
         quicktime_settings_path = self._generate_quicktime_settings()

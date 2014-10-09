@@ -31,17 +31,6 @@ class ExportSettings(HookBaseClass):
         """
         return self._generate_profile_xml()
 
-    def get_target_location(self):
-        """
-        Return the folder on disk where temporary quicktimes should be stored.
-        These quicktimes will be automatically removed once they have been
-        uploaded to shotgun.
-        
-        :returns: A directory on disk  
-        """
-        return "/tmp"
-
-
     ###############################################################################################
     # helper methods and internals
     
@@ -89,17 +78,17 @@ class ExportSettings(HookBaseClass):
       <essence name="video">
          <provider name="libquicktime">
             <codec name="H264E" longname="H264" type="video" description="Main Concept H264 Codec">
-               <params presetName="High_1080i_6Mbits">
-                  <param name="Target preset" internalname="target_preset" description="" type="enum" value="H264_HIGH" />
+               <params presetName="High_Blu_Ray_8Mbits">
+                  <param name="Target preset" internalname="target_preset" description="" type="enum" value="H264_BD" />
                   <param name="Frame-type options" internalname="frame_type" description="" type="section" />
-                  <param name="GOP size" internalname="idr_interval" description="" type="int" min="1" max="300" value="33" />
+                  <param name="GOP size" internalname="idr_interval" description="" type="int" min="1" max="300" value="30" />
                   <param name="B-Frames" internalname="numBframes" description="Number of B-frames between I and P" type="int" min="0" max="3" value="2" />
                   <param name="Adaptive B-frame decision" internalname="adaptive_b_frames" description="" type="bool" value="1" />
                   <param name="Automatic scene detection" internalname="vcsd_mode" description="" type="bool" value="1" />
                   <param name="Rate control" internalname="ratecontrol" description="" type="section" />
                   <param name="Rate control method" internalname="bit_rate_mode" description="" type="enum" value="Average bitrate" />
-                  <param name="Bitrate" internalname="bit_rate" description="Bitrate in kbit/s. (Used in bitrate mode.)" type="int" min="1" max="1000000" value="6000" />
-                  <param name="Max bitrate" internalname="max_bit_rate" description="Max bitrate in kbit/s. Must be greater than the bitrate. (Used in bitrate mode.)" type="int" min="1" max="1000000" value="8000" />
+                  <param name="Bitrate" internalname="bit_rate" description="Bitrate in kbit/s. (Used in bitrate mode.)" type="int" min="1" max="1000000" value="8000" />
+                  <param name="Max bitrate" internalname="max_bit_rate" description="Max bitrate in kbit/s. Must be greater than the bitrate. (Used in bitrate mode.)" type="int" min="1" max="1000000" value="9999" />
                   <param name="I-frame quantizer" internalname="quant_pI" description="Quantization value for I-frames. (Used in quantizer mode.)" type="int" min="1" max="51" value="24" />
                   <param name="P-frame quantizer" internalname="quant_pP" description="Quantization value for P-frames. (Used in quantizer mode.)" type="int" min="1" max="51" value="25" />
                   <param name="B-frame quantizer" internalname="quant_pB" description="Quantization value for B-frames. (Used in quantizer mode.)" type="int" min="1" max="51" value="27" />
@@ -138,8 +127,8 @@ class ExportSettings(HookBaseClass):
       <yuvColourSpace>PCS_UNKNOWN</yuvColourSpace>
       <operationalPattern>None</operationalPattern>
       <companyName>Autodesk</companyName>
-      <productName>Smoke</productName>
-      <versionName>2015.2.pr99</versionName>
+      <productName />
+      <versionName />
    </movie>
    <video>
       <fileType>QuickTime</fileType>
@@ -167,7 +156,7 @@ class ExportSettings(HookBaseClass):
    </video>
    <audio>
       <fileType>QuickTime</fileType>
-      <codec>4026793986</codec>
+      <codec>4026601474</codec>
       <codecProfile />
       <namePattern></namePattern>
       <mixdown>AsIs</mixdown>

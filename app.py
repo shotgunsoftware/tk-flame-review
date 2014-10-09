@@ -84,7 +84,7 @@ class FlameReview(Application):
             # populate the host to use for the export. Currently hard coded to local
             info["destinationHost"] = "localhost"
             # set the (temp) location where media is being output prior to upload.
-            info["destinationPath"] = self.execute_hook_method("settings_hook", "get_target_location")
+            info["destinationPath"] = self.engine.get_backburner_tmp()
             # pick up the xml export profile from the configuration
             info["presetPath"] = self.execute_hook_method("settings_hook", "get_export_preset")
     

@@ -43,6 +43,7 @@ class FlameReview(Application):
         callbacks["preCustomExport"] = self.pre_custom_export
         callbacks["preExportAsset"] = self.adjust_path
         callbacks["postExportAsset"] = self.register_post_asset_job
+        callbacks["postCustomExport"] = self.display_summary
         
         # register with the engine
         self.engine.register_export_hook(menu_caption, callbacks)
@@ -316,4 +317,25 @@ class FlameReview(Application):
         except Exception, e:
             self.log_warning("Could not remove temporary file '%s': %s" % (full_path, e))
             
+            
+            
+    def display_summary(self, session_id, info):
+        """
+        Show summary UI to user
+        
+        :param session_id: String which identifies which export session is being referred to.
+                           This parameter makes it possible to distinguish between different 
+                           export sessions running if this is needed (typically only needed for
+                           expert use cases).
+        
+        :param info: Information about the export. Contains the keys      
+                     - destinationHost: Host name where the exported files will be written to.
+                     - destinationPath: Export path root.
+                     - presetPath: Path to the preset used for the export.
+        
+        """
+        self.log_debug("Todo: pop up summary UI!")
+        
+        
+        
             

@@ -299,7 +299,7 @@ class FlameReview(Application):
         data["description"] = comments
         data["project"] = self.context.project
         data["entity"] = sg_data
-        data["created_by"] = sgtk.util.get_current_user(self.sgtk)
+        data["created_by"] = self.context.user
         sg_version_data = self.shotgun.create("Version", data)
         
         self.log_debug("Created a version in Shotgun: %s" % sg_version_data)

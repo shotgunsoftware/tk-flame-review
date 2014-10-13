@@ -22,7 +22,9 @@ from sgtk.platform import Application
 
 class FlameReview(Application):
     """
-    Export functionality to automate and streamline content export out of Flame.
+    Review functionality to automate and streamline sequence review out of flame.
+    
+    Generates quicktimes for the selected flame sequences and uploads these to Shotgun.
     """
     
     def init_app(self):
@@ -36,6 +38,9 @@ class FlameReview(Application):
         
         # track the comments entered by the user
         self._review_comments = ""
+        
+        # flag to indicate that something was actually submitted
+        self._submission_done = False
         
         # set up callbacks for the engine to trigger 
         # when this profile is being triggered 
@@ -67,6 +72,9 @@ class FlameReview(Application):
                      - abortMessage: Abort message to feed back to client
         """
         from PySide import QtGui, QtCore
+        
+        # clear our flags
+        self._submission_done = False
         
         # pop up a UI asking the user for description
         submit_dialog = self.import_module("submit_dialog")               
@@ -211,6 +219,9 @@ class FlameReview(Application):
                                                 "populate_shotgun",
                                                 args)
         
+        # done!
+        self._submission_done = True
+        
     def populate_shotgun(self, info, comments):
         """
         This metod is called via backburner and therefore runs in the background.
@@ -344,6 +355,17 @@ class FlameReview(Application):
         data["project"] = self.context.project
         data["entity"] = sg_data
         data["created_by"] = self.context.user
+        
+        # general metadata for the version         
+        data["sg_first_frame"] = info["sourceIn"]
+        data["sg_last_frame"] = info["sourceOut"]
+        data["frame_count"] = info["sourceOut"] - info["sourceIn"] + 1 
+        data["frame_range"] = "%s-%s" % (info["sourceIn"], info["sourceOut"])         
+        data["sg_frames_have_slate"] = False
+        data["sg_movie_has_slate"] = False         
+        data["sg_frames_aspect_ratio"] = info["aspectRatio"]
+        data["sg_movie_aspect_ratio"] = info["aspectRatio"]
+        
         sg_version_data = self.shotgun.create("Version", data)
         
         self.log_debug("Created a version in Shotgun: %s" % sg_version_data)
@@ -378,8 +400,20 @@ class FlameReview(Application):
                      - presetPath: Path to the preset used for the export.
         
         """
-        self.log_debug("Todo: pop up summary UI!")
+        # todo - replace with custom UI
+        from PySide import QtGui, QtCore
         
-        
-        
+        if self._submission_done:
+            # things are cooking!
+            QtGui.QMessageBox.information(None,
+                                          "Shotgun submission complete!",
+                                          "Submission complete! Quicktimes will be generated in the background and "
+                                          "then uploaded to Shotgun.")
+
+        else:
+            # somewhere along the way, outside hooks, the process was cancelled or errored.
+            QtGui.QMessageBox.warning(None,
+                                      "Submission cancelled!",
+                                      "Shotgun submission was cancelled or aborted. Nothing will be uploaded "
+                                      "to Shotgun for review.")
             

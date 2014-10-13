@@ -14,7 +14,7 @@ from .ui.dialog import Ui_Dialog
 
 class Dialog(QtGui.QWidget):
     """
-    Not found UI dialog.
+    Review submission dialog.
     """
     
     def __init__(self):
@@ -46,6 +46,8 @@ class Dialog(QtGui.QWidget):
     def get_comments(self):
         """
         Returns the comments entered by the user
+        
+        :returns: comments as string
         """
         return self.ui.comments.toPlainText()
         

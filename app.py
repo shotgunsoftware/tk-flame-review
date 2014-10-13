@@ -355,6 +355,7 @@ class FlameReview(Application):
         data["project"] = self.context.project
         data["entity"] = sg_data
         data["created_by"] = self.context.user
+        data["user"] = context.user
         
         # general metadata for the version         
         data["sg_first_frame"] = info["sourceIn"]

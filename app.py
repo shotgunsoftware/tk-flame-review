@@ -77,8 +77,8 @@ class FlameReview(Application):
         self._submission_done = False
         
         # pop up a UI asking the user for description
-        submit_dialog = self.import_module("submit_dialog")               
-        (return_code, widget) = self.engine.show_modal("Submit for Review", self, submit_dialog.Dialog)
+        tk_flame_review = self.import_module("tk_flame_review")
+        (return_code, widget) = self.engine.show_modal("Submit for Review", self, tk_flame_review.SubmitDialog)
         
         if return_code == QtGui.QDialog.Rejected:
             # user pressed cancel
@@ -408,17 +408,8 @@ class FlameReview(Application):
         # todo - replace with custom UI
         from PySide import QtGui, QtCore
         
-        if self._submission_done:
-            # things are cooking!
-            QtGui.QMessageBox.information(None,
-                                          "Shotgun submission complete!",
-                                          "Submission complete! Quicktimes will be generated in the background and "
-                                          "then uploaded to Shotgun.")
-
-        else:
-            # somewhere along the way, outside hooks, the process was cancelled or errored.
-            QtGui.QMessageBox.warning(None,
-                                      "Submission cancelled!",
-                                      "Shotgun submission was cancelled or aborted. Nothing will be uploaded "
-                                      "to Shotgun for review.")
+        # pop up a UI asking the user for description
+        tk_flame_review = self.import_module("tk_flame_review")
+        self.engine.show_modal("Submission Summary", self, tk_flame_review.SummaryDialog, self._submission_done)
+        
             

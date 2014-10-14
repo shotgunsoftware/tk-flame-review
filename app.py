@@ -78,7 +78,7 @@ class FlameReview(Application):
         
         # pop up a UI asking the user for description
         submit_dialog = self.import_module("submit_dialog")               
-        (return_code, widget) = self.engine.show_modal("Submit to Shotgun", self, submit_dialog.Dialog)
+        (return_code, widget) = self.engine.show_modal("Submit for Review", self, submit_dialog.Dialog)
         
         if return_code == QtGui.QDialog.Rejected:
             # user pressed cancel
@@ -366,6 +366,10 @@ class FlameReview(Application):
         data["sg_movie_has_slate"] = False         
         data["sg_frames_aspect_ratio"] = info["aspectRatio"]
         data["sg_movie_aspect_ratio"] = info["aspectRatio"]
+        
+        # This is used to find the latest Version from the same department.
+        # todo: make this configurable?
+        data["sg_department"] = "Editorial" 
         
         sg_version_data = self.shotgun.create("Version", data)
         

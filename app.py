@@ -355,7 +355,7 @@ class FlameReview(Application):
         data["project"] = self.context.project
         data["entity"] = sg_data
         data["created_by"] = self.context.user
-        data["user"] = context.user
+        data["user"] = self.context.user
         
         # general metadata for the version         
         data["sg_first_frame"] = info["sourceIn"]
@@ -405,9 +405,6 @@ class FlameReview(Application):
                      - presetPath: Path to the preset used for the export.
         
         """
-        # todo - replace with custom UI
-        from PySide import QtGui, QtCore
-        
         # pop up a UI asking the user for description
         tk_flame_review = self.import_module("tk_flame_review")
         self.engine.show_modal("Submission Summary", self, tk_flame_review.SummaryDialog, self._submission_done)

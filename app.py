@@ -90,7 +90,7 @@ class FlameReview(Application):
             self._review_comments = widget.get_comments()
             
             # populate the host to use for the export. Currently hard coded to local
-            info["destinationHost"] = "localhost"
+            info["destinationHost"] = self.engine.get_server_hostname()
             # set the (temp) location where media is being output prior to upload.
             info["destinationPath"] = self.engine.get_backburner_tmp()
             # pick up the xml export profile from the configuration
@@ -319,7 +319,7 @@ class FlameReview(Application):
             #
             input_cmd = "%s -n \"%s@CLIP\" -h %s -W %s -H %s -L" % (self.engine.get_read_frame_path(),
                                                                     full_path,
-                                                                    "localhost:Gateway", # todo: configurable!
+                                                                    "%s:Gateway" % self.engine.get_server_hostname(), 
                                                                     info["width"],
                                                                     info["height"])
             

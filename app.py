@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Shotgun Software Inc.
+# Copyright (c) 2014 Shotgun Software Inc.
 # 
 # CONFIDENTIAL AND PROPRIETARY
 # 
@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 """
-Flame app to send things to review.
+Flame app to send sequences to review.
 """
 
 import os
@@ -299,8 +299,8 @@ class FlameReview(Application):
             
             self.log_debug("Created %s" % sg_data)
             
-            # now extrct and upload a thumbnail
-            # for the extration, we use the readframe utility which is part of the wiretap library
+            # now extract and upload a thumbnail
+            # for the extraction, we use the readframe utility which is part of the wiretap library
             # Syntax:
             #
             # Usage: ./read_frame

@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Shotgun Software Inc.
+# Copyright (c) 2014 Shotgun Software Inc.
 # 
 # CONFIDENTIAL AND PROPRIETARY
 # 
@@ -14,12 +14,14 @@ from .ui.summary_dialog import Ui_SummaryDialog
 
 class SummaryDialog(QtGui.QWidget):
     """
-    Review submission dialog.
+    Status popup that shows after the review submission has completed.
     """
     
     def __init__(self, success):
         """
         Constructor
+        
+        :param success: If true, show the success screen else the failure screen.
         """
         # first, call the base class and let it do its thing.
         QtGui.QWidget.__init__(self)

@@ -357,13 +357,24 @@ class FlameReview(Application):
         data["created_by"] = self.context.user
         data["user"] = self.context.user
         
-        # general metadata for the version         
-        data["sg_first_frame"] = info["sourceIn"]
-        data["sg_last_frame"] = info["sourceOut"]
-        data["frame_count"] = info["sourceOut"] - info["sourceIn"] + 1 
-        data["frame_range"] = "%s-%s" % (info["sourceIn"], info["sourceOut"])         
+        # general metadata for the version
+        # for the frame range, there isn't very meaningful metadata we can add
+        # and we don't have corresponding frames on disk
+        # so set the first frame to 1 in order to normalize the frames from flame
+        # which typically start at 10:00:00.00
+        #
+        # also note that flame is out-exclusive, meaning that if you have the 
+        # frame range 100-111, it corresponds to the frames
+        # 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110
+        # 
+        # We transform the above frame range (100-111) to be 1-10 in shotgun with length 10. 
+        #
+        data["sg_first_frame"] = 1
+        data["sg_last_frame"] = info["sourceOut"] - info["sourceIn"]
+        data["frame_count"] = info["sourceOut"] - info["sourceIn"]
+        data["frame_range"] = "%s-%s" % (data["sg_first_frame"], data["sg_last_frame"])         
         data["sg_frames_have_slate"] = False
-        data["sg_movie_has_slate"] = False         
+        data["sg_movie_has_slate"] = False 
         data["sg_frames_aspect_ratio"] = info["aspectRatio"]
         data["sg_movie_aspect_ratio"] = info["aspectRatio"]
         

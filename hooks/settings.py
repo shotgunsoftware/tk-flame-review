@@ -115,6 +115,11 @@ class ExportSettings(HookBaseClass):
         :returns: path to export preset xml file
         """
         
+        # this profile is a 8-bit QuickTime file (H.264 1280x720 8Mbits) with 
+        # preset High_Blu_Ray_8Mbits, suitable for upload to Shotgun Review.
+        #
+        # for more details around quicktime settings and shotgun, see
+        # https://support.shotgunsoftware.com/entries/26303513-Transcoding
         
         xml = """<?xml version="1.0" encoding="UTF-8"?>
 <preset version="4">

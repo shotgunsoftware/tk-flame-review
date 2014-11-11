@@ -44,8 +44,8 @@ supported_engines: tk-flame
 requires_shotgun_fields:
         
 # More verbose description of this item 
-display_name: "Flame to Shotgun Review"
-description: "Sends sequences in flame to review in Shotgun."
+display_name: "Flame Review Export"
+description: "Sends sequences in flame to Shotgun Review."
 
 # Required minimum versions for this item to run
 requires_shotgun_version:

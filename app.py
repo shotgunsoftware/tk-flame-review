@@ -207,7 +207,7 @@ class FlameReview(Application):
         
         # and populate UI params
         
-        backburner_job_title = "%s '%s' - Uploading media to Shotgun" % (self.get_setting("shotgun_entity_type"), 
+        backburner_job_title = "%s %s - Shotgun Upload" % (self.get_setting("shotgun_entity_type"), 
                                                                          info.get("sequenceName"))
         backburner_job_desc = "Creates a new version record in Shotgun and uploads the associated Quicktime."        
         

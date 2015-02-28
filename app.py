@@ -22,9 +22,9 @@ from sgtk.platform import Application
 
 class FlameReview(Application):
     """
-    Review functionality to automate and streamline sequence review out of flame.
+    Review functionality to automate and streamline sequence review out of Flame.
     
-    Generates quicktimes for the selected flame sequences and uploads these to Shotgun.
+    Generates quicktimes for the selected Flame sequences and uploads these to Shotgun.
     """
     
     def init_app(self):
@@ -33,7 +33,7 @@ class FlameReview(Application):
         """
         self.log_debug("%s: Initializing" % self)
 
-        # register our desired interaction with flame hooks
+        # register our desired interaction with Flame hooks
         menu_caption = self.get_setting("menu_name")
         
         # track the comments entered by the user
@@ -55,7 +55,7 @@ class FlameReview(Application):
         
     def pre_custom_export(self, session_id, info):
         """
-        Hook called before a custom export begins. The export will be blocked
+        Flame hook called before a custom export begins. The export will be blocked
         until this function returns. This can be used to fill information that would
         have normally been extracted from the export window.
         
@@ -68,7 +68,7 @@ class FlameReview(Application):
                      - destinationHost: Host name where the exported files will be written to.
                      - destinationPath: Export path root.
                      - presetPath: Path to the preset used for the export.
-                     - abort: Pass True back to flame if you want to abort
+                     - abort: Pass True back to Flame if you want to abort
                      - abortMessage: Abort message to feed back to client
         """
         from PySide import QtGui, QtCore
@@ -100,7 +100,7 @@ class FlameReview(Application):
                 
     def adjust_path(self, session_id, info):
         """
-        Called when an item is about to be exported and a path needs to be computed.
+        Flame hook called when an item is about to be exported and a path needs to be computed.
  
         :param session_id: String which identifies which export session is being referred to.
                            This parameter makes it possible to distinguish between different 
@@ -147,7 +147,7 @@ class FlameReview(Application):
         
     def register_post_asset_job(self, session_id, info):
         """
-        Called when an item has been exported.
+        Flame hook called when an item has been exported.
         
         :param session_id: String which identifies which export session is being referred to.
                            This parameter makes it possible to distinguish between different 
@@ -226,7 +226,7 @@ class FlameReview(Application):
         """
         This metod is called via backburner and therefore runs in the background.
         It does all the heavy lifting in the app:
-        - creates a shotgun sequence (with task templates) if this doesn't exist
+        - creates a Shotgun sequence (with task templates) if this doesn't exist
         - creates a version and links it up with the sequence
         - uploads the quicktime to the version
         
@@ -270,7 +270,7 @@ class FlameReview(Application):
         if not os.path.exists(full_path):
             raise TankError("Cannot find quicktime '%s'! Aborting upload." % full_path)
         
-        self.log_debug("Begin shotgun processing for %s..." % full_path)
+        self.log_debug("Begin Shotgun processing for %s..." % full_path)
         self.log_debug("File size is %s bytes." % os.path.getsize(full_path))
                 
         # ensure that the entity exists in Shotgun
@@ -331,7 +331,7 @@ class FlameReview(Application):
             else:
                 self.log_debug("Wrote thumbnail %s" % thumbnail_jpg)
                 self.sgtk.shotgun.upload_thumbnail(sg_data["type"], sg_data["id"], thumbnail_jpg)
-                self.log_debug("Uploaded thumbnail to shotgun.")
+                self.log_debug("Uploaded thumbnail to Shotgun.")
                 try:
                     os.remove(thumbnail_jpg)
                     self.log_debug("Removed temporary file '%s'." % thumbnail_jpg)
@@ -341,7 +341,7 @@ class FlameReview(Application):
             # thumbnail upload done!
 
         # now start the version creation process
-        self.log_debug("Will associate upload with shotgun entity %s..." % sg_data)
+        self.log_debug("Will associate upload with Shotgun entity %s..." % sg_data)
 
         # create a version in Shotgun
         if info["versionNumber"] != 0:
@@ -360,14 +360,14 @@ class FlameReview(Application):
         # general metadata for the version
         # for the frame range, there isn't very meaningful metadata we can add
         # and we don't have corresponding frames on disk
-        # so set the first frame to 1 in order to normalize the frames from flame
+        # so set the first frame to 1 in order to normalize the frames from Flame
         # which typically start at 10:00:00.00
         #
-        # also note that flame is out-exclusive, meaning that if you have the 
+        # also note that Flame is out-exclusive, meaning that if you have the 
         # frame range 100-111, it corresponds to the frames
         # 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110
         # 
-        # We transform the above frame range (100-111) to be 1-10 in shotgun with length 10. 
+        # We transform the above frame range (100-111) to be 1-10 in Shotgun with length 10. 
         #
         data["sg_first_frame"] = 1
         data["sg_last_frame"] = info["sourceOut"] - info["sourceIn"]
@@ -387,7 +387,7 @@ class FlameReview(Application):
         self.log_debug("Created a version in Shotgun: %s" % sg_version_data)
         
         # upload quicktime to Shotgun
-        self.log_debug("Begin upload of quicktime to shotgun...")
+        self.log_debug("Begin upload of quicktime to Shotgun...")
         self.shotgun.upload("Version", sg_version_data["id"], full_path, "sg_uploaded_movie")
         self.log_debug("Upload complete!")
         
@@ -403,7 +403,7 @@ class FlameReview(Application):
             
     def display_summary(self, session_id, info):
         """
-        Show summary UI to user
+        Flame hook which is used to show summary UI to user
         
         :param session_id: String which identifies which export session is being referred to.
                            This parameter makes it possible to distinguish between different 

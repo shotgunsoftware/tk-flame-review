@@ -17,17 +17,17 @@ HookBaseClass = sgtk.get_hook_baseclass()
 
 class ExportSettings(HookBaseClass):
     """
-    This hook controls the settings that flame will use when it exports the quicktimes 
+    This hook controls the settings that Flame will use when it exports the quicktimes 
     prior to uploading them to Shotgun. It also lets a user control where on disk temporary
     quicktime files will be located.
     """
 
     def get_export_preset(self):
         """
-        Return the path to a flame export preset that should be used when generating 
+        Return the path to a Flame export preset that should be used when generating 
         a sequence quicktime.
         
-        :returns: Path on disk to flame export preset 
+        :returns: Path on disk to Flame export preset 
         """
         return self._generate_profile_xml()
 
@@ -109,7 +109,7 @@ class ExportSettings(HookBaseClass):
     
     def _generate_profile_xml(self):
         """
-        Generate flame export profile settings suitable for generating a single quicktime 
+        Generate Flame export profile settings suitable for generating a single quicktime 
         file to represent an entire sequence.
         
         :returns: path to export preset xml file
@@ -122,10 +122,10 @@ class ExportSettings(HookBaseClass):
         # https://support.shotgunsoftware.com/entries/26303513-Transcoding
         
         # a note on xml file formats: 
-        # Each major version of flame typically implements a particular 
+        # Each major version of Flame typically implements a particular 
         # version of the preset xml protocol. This is denoted by a preset version
         # number in the xml file. In order for the integration to run smoothly across
-        # multiple versions of flame, flame ideally needs to be presented with a preset
+        # multiple versions of Flame, Flame ideally needs to be presented with a preset
         # which matches the current preset version. If you present an older version, a
         # warning dialog may pop up which is confusing to users. Therefore, make sure that
         # we always generate xmls with a matching preset version.   

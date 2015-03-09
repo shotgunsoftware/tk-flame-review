@@ -47,8 +47,8 @@ class ExportSettings(HookBaseClass):
         :returns: path to the created file
         """
         # determine location
-        file_path = os.path.join(self.parent.cache_location, self.parent.instance_name, file_name)
-        folder = os.path.dirname(file_path)
+        folder = os.path.join(self.parent.cache_location, self.parent.instance_name)
+        file_path = os.path.join(folder, file_name)
 
         # create folders
         if not os.path.exists(folder):

@@ -47,7 +47,7 @@ class FlameReview(Application):
         callbacks = {}
         callbacks["preCustomExport"] = self.pre_custom_export
         callbacks["preExportAsset"] = self.adjust_path
-        callbacks["postExportAsset"] = self.register_post_asset_job
+        callbacks["postExportAsset"] = self.populate_shotgun
         callbacks["postCustomExport"] = self.display_summary
         
         # register with the engine
@@ -71,6 +71,8 @@ class FlameReview(Application):
                      - abort: Pass True back to Flame if you want to abort
                      - abortMessage: Abort message to feed back to client
         """
+        # Note - Since Flame is a PySide only environment, we import it directly
+        # rather than going through the sgtk wrappers.         
         from PySide import QtGui, QtCore
         
         # clear our flags
@@ -121,7 +123,7 @@ class FlameReview(Application):
            height:          Frame height of the exported asset.
            aspectRatio:     Frame aspect ratio of the exported asset.
            depth:           Frame depth of the exported asset. ( '8-bits', '10-bits', '12-bits', '16 fp' )
-           scanFormat:      Scan format of the exported asset. ( 'FILED_1', 'FIELD_2', 'PROGRESSIVE' )
+           scanFormat:      Scan format of the exported asset. ( 'FIELD_1', 'FIELD_2', 'PROGRESSIVE' )
            fps:             Frame rate of exported asset.
            sequenceFps:     Frame rate of the sequence the asset is part of.
            sourceIn:        Source in point in frame and asset frame rate.
@@ -145,7 +147,7 @@ class FlameReview(Application):
         info["resolvedPath"] = "shotgun_%s.mov" % uuid.uuid4().hex
          
         
-    def register_post_asset_job(self, session_id, info):
+    def populate_shotgun(self, session_id, info):
         """
         Flame hook called when an item has been exported.
         
@@ -171,7 +173,7 @@ class FlameReview(Application):
            height:          Frame height of the exported asset.
            aspectRatio:     Frame aspect ratio of the exported asset.
            depth:           Frame depth of the exported asset. ( '8-bits', '10-bits', '12-bits', '16 fp' )
-           scanFormat:      Scan format of the exported asset. ( 'FILED_1', 'FIELD_2', 'PROGRESSIVE' )
+           scanFormat:      Scan format of the exported asset. ( 'FIELD_1', 'FIELD_2', 'PROGRESSIVE' )
            fps:             Frame rate of exported asset.
            sequenceFps:     Frame rate of the sequence the asset is part of.
            sourceIn:        Source in point in frame and asset frame rate.
@@ -216,15 +218,15 @@ class FlameReview(Application):
                                                 backburner_job_desc, 
                                                 run_after_job_id,
                                                 self, 
-                                                "populate_shotgun",
+                                                "backburner_populate_shotgun",
                                                 args)
         
         # done!
         self._submission_done = True
         
-    def populate_shotgun(self, info, comments):
+    def backburner_populate_shotgun(self, info, comments):
         """
-        This metod is called via backburner and therefore runs in the background.
+        This method is called via backburner and therefore runs in the background.
         It does all the heavy lifting in the app:
         - creates a Shotgun sequence (with task templates) if this doesn't exist
         - creates a version and links it up with the sequence
@@ -247,7 +249,7 @@ class FlameReview(Application):
            height:          Frame height of the exported asset.
            aspectRatio:     Frame aspect ratio of the exported asset.
            depth:           Frame depth of the exported asset. ( '8-bits', '10-bits', '12-bits', '16 fp' )
-           scanFormat:      Scan format of the exported asset. ( 'FILED_1', 'FIELD_2', 'PROGRESSIVE' )
+           scanFormat:      Scan format of the exported asset. ( 'FIELD_1', 'FIELD_2', 'PROGRESSIVE' )
            fps:             Frame rate of exported asset.
            sequenceFps:     Frame rate of the sequence the asset is part of.
            sourceIn:        Source in point in frame and asset frame rate.
@@ -264,7 +266,6 @@ class FlameReview(Application):
          
         """ 
         
-        # create version
         full_path = os.path.join(info["destinationPath"], info["resolvedPath"])
 
         if not os.path.exists(full_path):
@@ -283,6 +284,9 @@ class FlameReview(Application):
         if not sg_data:    
             # Create a new item in Shotgun
             # First see if we should assign a task template
+            # this is controlled via the app settings
+            # if no task template is specified in the settings, 
+            # the item will be created without tasks.
             self.log_debug("Creating a new item in Shotgun...")
             task_template_name = self.get_setting("task_template")
             task_template = None
@@ -329,14 +333,17 @@ class FlameReview(Application):
             if os.system(full_cmd) != 0:
                 self.log_warning("Could not extract thumbnail! See error log for details.")
             else:
-                self.log_debug("Wrote thumbnail %s" % thumbnail_jpg)
-                self.sgtk.shotgun.upload_thumbnail(sg_data["type"], sg_data["id"], thumbnail_jpg)
-                self.log_debug("Uploaded thumbnail to Shotgun.")
                 try:
-                    os.remove(thumbnail_jpg)
-                    self.log_debug("Removed temporary file '%s'." % thumbnail_jpg)
-                except Exception, e:
-                    self.log_warning("Could not remove temporary file '%s': %s" % (thumbnail_jpg, e))    
+                    self.log_debug("Wrote thumbnail %s" % thumbnail_jpg)
+                    self.sgtk.shotgun.upload_thumbnail(sg_data["type"], sg_data["id"], thumbnail_jpg)
+                    self.log_debug("Uploaded thumbnail to Shotgun.")
+                finally:
+                    # clean up our temp file
+                    try:
+                        os.remove(thumbnail_jpg)
+                        self.log_debug("Removed temporary file '%s'." % thumbnail_jpg)
+                    except Exception, e:
+                        self.log_warning("Could not remove temporary file '%s': %s" % (thumbnail_jpg, e))    
                 
             # thumbnail upload done!
 

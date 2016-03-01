@@ -226,7 +226,7 @@ class FlameReview(Application):
 
         # Log usage metrics
         try:
-            self.log_metric("Export")
+            self.log_metric("Version Create")
             self.engine.log_user_attribute_metric(
                 "%s version" % (self.name,),
                 self.version,

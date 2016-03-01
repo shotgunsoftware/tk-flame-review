@@ -223,6 +223,17 @@ class FlameReview(Application):
         
         # done!
         self._submission_done = True
+
+        # Log usage metrics
+        try:
+            self.log_metric("Export")
+            self.engine.log_user_attribute_metric(
+                "%s version" % (self.name,),
+                self.version,
+            )
+        except:
+            # ingore any errors. ex: metrics logging not supported
+            pass
         
     def backburner_populate_shotgun(self, info, comments):
         """

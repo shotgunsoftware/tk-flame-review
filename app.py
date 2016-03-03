@@ -99,7 +99,14 @@ class FlameReview(Application):
             info["presetPath"] = self.execute_hook_method("settings_hook", "get_export_preset")
     
             self.log_debug("%s: Starting custom export session with preset '%s'" % (self, info["presetPath"]))
-                
+
+        # Log usage metrics
+        try:
+            self.log_metric("Sequence Export", log_version=True)
+        except:
+            # ingore any errors. ex: metrics logging not supported
+            pass
+
     def adjust_path(self, session_id, info):
         """
         Flame hook called when an item is about to be exported and a path needs to be computed.
@@ -223,7 +230,7 @@ class FlameReview(Application):
         
         # done!
         self._submission_done = True
-        
+
     def backburner_populate_shotgun(self, info, comments):
         """
         This method is called via backburner and therefore runs in the background.

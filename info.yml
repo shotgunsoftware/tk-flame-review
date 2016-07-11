@@ -28,6 +28,13 @@ configuration:
         description: The Shotgun task template to assign to new shotgun entities or blank if none.
         default_value: ""
 
+    bypass_shotgun_transcoding:
+        description: Try to bypass the Shotgun server side transcoding if possible. This will only generate
+                     generate and upload a h264 quicktime and not a webm, meaning that playback will not be
+                     supported on all browsers.
+        type: bool
+        default_value: false
+
     settings_hook:
         type: hook
         default_value: "{self}/settings.py"

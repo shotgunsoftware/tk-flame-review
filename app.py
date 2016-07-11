@@ -309,50 +309,15 @@ class FlameReview(Application):
                                                         "project": self.context.project})
             
             self.log_debug("Created %s" % sg_data)
-            
-            # now extract and upload a thumbnail
-            # for the extraction, we use the readframe utility which is part of the wiretap library
-            # Syntax:
-            #
-            # Usage: ./read_frame
-            #   -n <clip node id> (if empty, generate 4x4 black media)
-            #   [ -h <Wiretap server ID> (default = localhost) ]
-            #   [ -W <display width> (default=same as source) ]
-            #   [ -H <display height> (default=same as source) ]
-            #   [ -b <output bits per pixel (24|32)> (default = 24) ]
-            #   [ -i <zero-based start frame idx> (default = 0) ]
-            #   [ -N <number of frames to output> (default = 1, -1 for all)
-            #   [ -r (output raw RGB, default=jpg) ]
-            #   [ -O (flip raw output orientation, default=bottom to top) ]
-            #   [ -L (use lowest resolution available, default=highest) ]
-            #   [ -c <compression factor [0,100]> (default = 100)
-            #   [ -p <processing options> (default = none)
-            #
-            input_cmd = "%s -n \"%s@CLIP\" -h %s -W %s -H %s -L" % (self.engine.get_read_frame_path(),
-                                                                    full_path,
-                                                                    "%s:Gateway" % self.engine.get_server_hostname(), 
-                                                                    info["width"],
-                                                                    info["height"])
-            
-            thumbnail_jpg = os.path.join(self.engine.get_backburner_tmp(), "tk_thumb_%s.jpg" % uuid.uuid4().hex)
-            full_cmd = "%s > %s" % (input_cmd, thumbnail_jpg)
-            self.log_debug("Executing %s" % full_cmd)
-            if os.system(full_cmd) != 0:
-                self.log_warning("Could not extract thumbnail! See error log for details.")
-            else:
-                try:
-                    self.log_debug("Wrote thumbnail %s" % thumbnail_jpg)
-                    self.sgtk.shotgun.upload_thumbnail(sg_data["type"], sg_data["id"], thumbnail_jpg)
-                    self.log_debug("Uploaded thumbnail to Shotgun.")
-                finally:
-                    # clean up our temp file
-                    try:
-                        os.remove(thumbnail_jpg)
-                        self.log_debug("Removed temporary file '%s'." % thumbnail_jpg)
-                    except Exception, e:
-                        self.log_warning("Could not remove temporary file '%s': %s" % (thumbnail_jpg, e))    
-                
-            # thumbnail upload done!
+
+            # upload thumb
+            self._upload_thumbnail(
+                full_path,
+                info["width"],
+                info["height"],
+                sg_data["type"],
+                sg_data["id"]
+            )
 
         # now start the version creation process
         self.log_debug("Will associate upload with Shotgun entity %s..." % sg_data)
@@ -401,9 +366,29 @@ class FlameReview(Application):
         self.log_debug("Created a version in Shotgun: %s" % sg_version_data)
         
         # upload quicktime to Shotgun
-        self.log_debug("Begin upload of quicktime to Shotgun...")
-        self.shotgun.upload("Version", sg_version_data["id"], full_path, "sg_uploaded_movie")
-        self.log_debug("Upload complete!")
+        if self.get_setting("bypass_shotgun_transcoding"):
+            self.log_debug("Begin upload of explicit mp4 quicktime to Shotgun...")
+            self.shotgun.upload(
+                "Version",
+                sg_version_data["id"],
+                full_path,
+                "sg_uploaded_movie_mp4"
+            )
+            self.log_debug("Upload complete!")
+
+            # upload thumb
+            self._upload_thumbnail(
+                full_path,
+                info["width"],
+                info["height"],
+                "Version",
+                sg_version_data["id"]
+            )
+
+        else:
+            self.log_debug("Begin upload of quicktime to Shotgun...")
+            self.shotgun.upload("Version", sg_version_data["id"], full_path, "sg_uploaded_movie")
+            self.log_debug("Upload complete!")
         
         # clean up
         try:
@@ -412,7 +397,60 @@ class FlameReview(Application):
             self.log_debug("Temporary quicktime file successfully deleted.")
         except Exception, e:
             self.log_warning("Could not remove temporary file '%s': %s" % (full_path, e))
-            
+
+    def _upload_thumbnail(self, full_path, width, height, entity_type, entity_id):
+        """
+        Given a flame image sequence path, extract a thumbnail and upload
+        to Shotgun for the given entity.
+
+        :param full_path: flame path to render
+        :param width: Width of image to extract
+        :param height: Height of image to extract
+        :param entity_type: Shotgun entity type to upload to
+        :param entity_id: Shotgun id for reflection
+        :return:
+        """
+        # now extract and upload a thumbnail
+        # for the extraction, we use the readframe utility which is part of the wiretap library
+        # Syntax:
+        #
+        # Usage: ./read_frame
+        #   -n <clip node id> (if empty, generate 4x4 black media)
+        #   [ -h <Wiretap server ID> (default = localhost) ]
+        #   [ -W <display width> (default=same as source) ]
+        #   [ -H <display height> (default=same as source) ]
+        #   [ -b <output bits per pixel (24|32)> (default = 24) ]
+        #   [ -i <zero-based start frame idx> (default = 0) ]
+        #   [ -N <number of frames to output> (default = 1, -1 for all)
+        #   [ -r (output raw RGB, default=jpg) ]
+        #   [ -O (flip raw output orientation, default=bottom to top) ]
+        #   [ -L (use lowest resolution available, default=highest) ]
+        #   [ -c <compression factor [0,100]> (default = 100)
+        #   [ -p <processing options> (default = none)
+        #
+        input_cmd = "%s -n \"%s@CLIP\" -h %s -W %s -H %s -L" % (self.engine.get_read_frame_path(),
+                                                                full_path,
+                                                                "%s:Gateway" % self.engine.get_server_hostname(),
+                                                                width,
+                                                                height)
+
+        thumbnail_jpg = os.path.join(self.engine.get_backburner_tmp(), "tk_thumb_%s.jpg" % uuid.uuid4().hex)
+        full_cmd = "%s > %s" % (input_cmd, thumbnail_jpg)
+        self.log_debug("Executing %s" % full_cmd)
+        if os.system(full_cmd) != 0:
+            self.log_warning("Could not extract thumbnail! See error log for details.")
+        else:
+            try:
+                self.log_debug("Wrote thumbnail %s" % thumbnail_jpg)
+                self.sgtk.shotgun.upload_thumbnail(entity_type, entity_id, thumbnail_jpg)
+                self.log_debug("Uploaded thumbnail to Shotgun.")
+            finally:
+                # clean up our temp file
+                try:
+                    os.remove(thumbnail_jpg)
+                    self.log_debug("Removed temporary file '%s'." % thumbnail_jpg)
+                except Exception, e:
+                    self.log_warning("Could not remove temporary file '%s': %s" % (thumbnail_jpg, e))
             
             
     def display_summary(self, session_id, info):

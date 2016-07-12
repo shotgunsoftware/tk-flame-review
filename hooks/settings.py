@@ -30,9 +30,8 @@ class ExportSettings(HookBaseClass):
         """
         # base it on one of the default presets that ship with Flame.
         return os.path.join(
-            self.parent.engine.install_root,
-            "presets",
-            self.parent.engine.flame_version,
-            "export/presets/flame/movie_file/QuickTime (H.264 720p 8Mbits).xml"
+            self.parent.engine.export_presets_root,
+            "movie_file",
+            "QuickTime (H.264 720p 8Mbits).xml"
         )
 

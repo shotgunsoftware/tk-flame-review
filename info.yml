@@ -28,6 +28,15 @@ configuration:
         description: The Shotgun task template to assign to new shotgun entities or blank if none.
         default_value: ""
 
+    bypass_shotgun_transcoding:
+        description: Try to bypass the Shotgun server side transcoding if possible. This will only generate
+                     generate and upload a h264 quicktime and not a webm, meaning that playback will not be
+                     supported on firefox and no filmstrip thumbnails will be generated. The benefit of
+                     bypassing the transcoding is that the sequence is reviewable immediately after upload
+                     and the quality is significantly better.
+        type: bool
+        default_value: false
+
     settings_hook:
         type: hook
         default_value: "{self}/settings.py"
@@ -50,7 +59,7 @@ description: "Sends sequences in Flame to Shotgun Review."
 # Required minimum versions for this item to run
 requires_shotgun_version:
 requires_core_version: "v0.14.76"
-requires_engine_version: "v1.2.0"
+requires_engine_version: "v1.6.2"
 
 # the frameworks required to run this app
 frameworks:

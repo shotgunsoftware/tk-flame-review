@@ -226,6 +226,7 @@ class FlameReview(Application):
                                                 run_after_job_id,
                                                 self, 
                                                 "backburner_populate_shotgun",
+                                                info.get("destinationHost"),
                                                 args)
         
         # done!

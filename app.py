@@ -152,6 +152,8 @@ class FlameReview(Application):
         
         # ensure each quicktime gets a unique name
         info["resolvedPath"] = "shotgun_%s.mov" % uuid.uuid4().hex
+        # use Flame to run the post-export callbacks (not backburner)
+        info["useBackburner"] = False
          
         
     def populate_shotgun(self, session_id, info):

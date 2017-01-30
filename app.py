@@ -152,6 +152,9 @@ class FlameReview(Application):
         
         # ensure each quicktime gets a unique name
         info["resolvedPath"] = "shotgun_%s.mov" % uuid.uuid4().hex
+        # If client override DL_PYTHON_HOOK_PATH env var, it changes the order python hook
+        # are triggered and can change the value of the global hook useBackburnerPostExportAsset.
+        # "useBackburner" bypass the global option and set the option for that specific export job.
         # use Flame to run the post-export callbacks (not backburner)
         info["useBackburner"] = False
          

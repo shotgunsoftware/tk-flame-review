@@ -28,10 +28,19 @@ class ExportSettings(HookBaseClass):
         
         :returns: Path on disk to Flame export preset 
         """
-        # base it on one of the default presets that ship with Flame.
-        return os.path.join(
-            self.parent.engine.export_presets_root,
-            "movie_file",
-            "QuickTime (H.264 720p 8Mbits).xml"
-        )
+        
+        if self.parent.engine.is_version_less_than("2018.1") :
+            # base it on one of the default presets that ship with Flame.
+            return os.path.join(
+                self.parent.engine.export_presets_root,
+                "movie_file",
+                "QuickTime (H.264 720p 8Mbits).xml"
+            )
+        else :
+            # base it on one of the default presets that ship with Flame.
+            return os.path.join(
+                self.parent.engine.export_presets_root,
+                "shotgun",
+                "Submit for review.xml"
+            )
 

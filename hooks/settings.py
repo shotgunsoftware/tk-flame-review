@@ -40,7 +40,7 @@ class ExportSettings(HookBaseClass):
             # base it on one of the default presets that ship with Flame.
             return os.path.join(
                 self.parent.engine.export_presets_root,
-                "shotgun",
+                "movie_file",
                 "Submit for review.xml"
             )
 

@@ -28,10 +28,20 @@ class ExportSettings(HookBaseClass):
         
         :returns: Path on disk to Flame export preset 
         """
-        # base it on one of the default presets that ship with Flame.
+        # Use the "Submit for review" preset if it exist. This preset is packaged with flame 
+        # in new version and will point to an available codec depending on the flavour. This
+        # also give the opportunity to clients to override this preset if needs be.
+        preset_path = os.path.join(
+            self.parent.engine.export_presets_root,
+            "movie_file",
+            "Submit for review.xml"
+        )
+        if os.access(preset_path, os.R_OK) :
+            return preset_path
+ 
+        # fallback on one of the default presets that ship with Flame.
         return os.path.join(
             self.parent.engine.export_presets_root,
             "movie_file",
             "QuickTime (H.264 720p 8Mbits).xml"
         )
-

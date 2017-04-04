@@ -30,7 +30,7 @@ configuration:
 
     bypass_shotgun_transcoding:
         description: Try to bypass the Shotgun server side transcoding if possible. This will only generate
-                     generate and upload a h264 quicktime and not a webm, meaning that playback will not be
+                     and upload a h264 quicktime and not a webm, meaning that playback will not be
                      supported on firefox and no filmstrip thumbnails will be generated. The benefit of
                      bypassing the transcoding is that the sequence is reviewable immediately after upload
                      and the quality is significantly better.

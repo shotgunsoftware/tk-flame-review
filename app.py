@@ -70,9 +70,7 @@ class FlameReview(Application):
                      - abort: Pass True back to Flame if you want to abort
                      - abortMessage: Abort message to feed back to client
         """
-        # Note - Since Flame is a PySide only environment, we import it directly
-        # rather than going through the sgtk wrappers.         
-        from PySide import QtGui
+        from sgtk.platform.qt import QtGui
 
         # clear our flags
         self._submission_done = False

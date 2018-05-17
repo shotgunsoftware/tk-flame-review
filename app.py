@@ -124,7 +124,7 @@ class FlameReview(Application):
            name:            Name of the exported asset.
            sequenceName:    Name of the sequence the asset is part of.
            shotName:        Name of the shot the asset is part of.
-           assetType:       Type of exported asset. ( 'video', 'audio', 'batch', 'openClip', 'batchOpenClip' )
+           assetType:       Type of exported asset. ( 'video', 'movie', 'audio', 'batch', 'openClip', 'batchOpenClip' )
            width:           Frame width of the exported asset.
            height:          Frame height of the exported asset.
            aspectRatio:     Frame aspect ratio of the exported asset.
@@ -142,7 +142,7 @@ class FlameReview(Application):
            versionName:     Current version name of export (Empty if unversioned).
            versionNumber:   Current version number of export (0 if unversioned).        
         """
-        if info.get("assetType") != "video":
+        if info.get("assetType") not in ["video", "movie"]:
             # the review system ignores any other assets. The export profiles are defined
             # in the app's settings hook, so technically there shouldn't be any other items
             # generated - but just in case there are (because of customizations), we'll simply
@@ -178,7 +178,7 @@ class FlameReview(Application):
            name:            Name of the exported asset.
            sequenceName:    Name of the sequence the asset is part of.
            shotName:        Name of the shot the asset is part of.
-           assetType:       Type of exported asset. ( 'video', 'audio', 'batch', 'openClip', 'batchOpenClip' )
+           assetType:       Type of exported asset. ( 'video', 'movie', 'audio', 'batch', 'openClip', 'batchOpenClip' )
            isBackground:    True if the export of the asset happened in the background.
            backgroundJobId: Id of the background job given by the backburner manager upon submission. 
                             Empty if job is done in foreground.
@@ -201,7 +201,7 @@ class FlameReview(Application):
 
         """
 
-        if info.get("assetType") != "video":
+        if info.get("assetType") not in ["video", "movie"]:
             # the review system ignores any other assets. The export profiles are defined
             # in the app's settings hook, so technically there shouldn't be any other items
             # generated - but just in case there are (because of customizations), we'll simply
@@ -255,7 +255,7 @@ class FlameReview(Application):
            name:            Name of the exported asset.
            sequenceName:    Name of the sequence the asset is part of.
            shotName:        Name of the shot the asset is part of.
-           assetType:       Type of exported asset. ( 'video', 'audio', 'batch', 'openClip', 'batchOpenClip' )
+           assetType:       Type of exported asset. ( 'video', 'movie', 'audio', 'batch', 'openClip', 'batchOpenClip' )
            isBackground:    True if the export of the asset happened in the background.
            backgroundJobId: Id of the background job given by the backburner manager upon submission. 
                             Empty if job is done in foreground.

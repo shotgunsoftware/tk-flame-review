@@ -67,6 +67,7 @@ class FlameReview(Application):
                      - destinationHost: Host name where the exported files will be written to.
                      - destinationPath: Export path root.
                      - presetPath: Path to the preset used for the export.
+                     - isBackground: Perform the export in background. (True if not defined)
                      - abort: Pass True back to Flame if you want to abort
                      - abortMessage: Abort message to feed back to client
         """
@@ -94,6 +95,8 @@ class FlameReview(Application):
             info["destinationPath"] = self.engine.get_backburner_tmp()
             # pick up the xml export profile from the configuration
             info["presetPath"] = self.execute_hook_method("settings_hook", "get_export_preset")
+            # Is the movie generation for the preview foreground or background
+            info["isBackground"] = self.get_setting("background_export")
 
             self.log_debug("%s: Starting custom export session with preset '%s'" % (self, info["presetPath"]))
 

@@ -35,7 +35,14 @@ configuration:
                      bypassing the transcoding is that the sequence is reviewable immediately after upload
                      and the quality is significantly better.
         type: bool
-        default_value: false
+        default_value: False
+
+    background_export:
+        description: Is the movie generation for the preview done in background with
+                     a job sent to Backburner or directly in foreground during the
+                     submission process.
+        type: bool
+        default_value: True
 
     settings_hook:
         type: hook
@@ -59,7 +66,7 @@ description: "Sends sequences in Flame to Shotgun Review."
 # Required minimum versions for this item to run
 requires_shotgun_version:
 requires_core_version: "v0.18.45"
-requires_engine_version: "v1.8.1"
+requires_engine_version: "v1.14.3"
 
 # the frameworks required to run this app
 frameworks:

@@ -8,6 +8,7 @@
 
 from tank.platform.qt import QtCore, QtGui
 
+
 class Ui_SubmitDialog(object):
     def setupUi(self, SubmitDialog):
         SubmitDialog.setObjectName("SubmitDialog")
@@ -26,7 +27,9 @@ class Ui_SubmitDialog(object):
         self.verticalLayout.addWidget(self.comments)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtGui.QSpacerItem(368, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(
+            368, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.cancel = QtGui.QPushButton(SubmitDialog)
         self.cancel.setObjectName("cancel")
@@ -40,8 +43,27 @@ class Ui_SubmitDialog(object):
         QtCore.QMetaObject.connectSlotsByName(SubmitDialog)
 
     def retranslateUi(self, SubmitDialog):
-        SubmitDialog.setWindowTitle(QtGui.QApplication.translate("SubmitDialog", "Submit to Shotgun", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancel.setText(QtGui.QApplication.translate("SubmitDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
-        self.submit.setText(QtGui.QApplication.translate("SubmitDialog", "Submit to Shotgun", None, QtGui.QApplication.UnicodeUTF8))
+        SubmitDialog.setWindowTitle(
+            QtGui.QApplication.translate(
+                "SubmitDialog",
+                "Submit to Shotgun",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.cancel.setText(
+            QtGui.QApplication.translate(
+                "SubmitDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.submit.setText(
+            QtGui.QApplication.translate(
+                "SubmitDialog",
+                "Submit to Shotgun",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+
 
 from . import resources_rc

@@ -8,6 +8,7 @@
 
 from tank.platform.qt import QtCore, QtGui
 
+
 class Ui_SummaryDialog(object):
     def setupUi(self, SummaryDialog):
         SummaryDialog.setObjectName("SummaryDialog")
@@ -40,7 +41,9 @@ class Ui_SummaryDialog(object):
         self.verticalLayout.addWidget(self.stackedWidget)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtGui.QSpacerItem(368, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(
+            368, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.submit = QtGui.QPushButton(SummaryDialog)
         self.submit.setObjectName("submit")
@@ -52,7 +55,19 @@ class Ui_SummaryDialog(object):
         QtCore.QMetaObject.connectSlotsByName(SummaryDialog)
 
     def retranslateUi(self, SummaryDialog):
-        SummaryDialog.setWindowTitle(QtGui.QApplication.translate("SummaryDialog", "Submit to Shotgun", None, QtGui.QApplication.UnicodeUTF8))
-        self.submit.setText(QtGui.QApplication.translate("SummaryDialog", "Ok", None, QtGui.QApplication.UnicodeUTF8))
+        SummaryDialog.setWindowTitle(
+            QtGui.QApplication.translate(
+                "SummaryDialog",
+                "Submit to Shotgun",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.submit.setText(
+            QtGui.QApplication.translate(
+                "SummaryDialog", "Ok", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+
 
 from . import resources_rc

@@ -12,6 +12,7 @@
 Flame app to send sequences to review.
 """
 
+from __future__ import absolute_import
 import os
 import uuid
 
@@ -78,7 +79,9 @@ class FlameReview(Application):
 
         # pop up a UI asking the user for description
         tk_flame_review = self.import_module("tk_flame_review")
-        (return_code, widget) = self.engine.show_modal("Submit for Review", self, tk_flame_review.SubmitDialog)
+        (return_code, widget) = self.engine.show_modal(
+            "Submit for Review", self, tk_flame_review.SubmitDialog
+        )
 
         if return_code == QtGui.QDialog.Rejected:
             # user pressed cancel
@@ -94,11 +97,16 @@ class FlameReview(Application):
             # set the (temp) location where media is being output prior to upload.
             info["destinationPath"] = self.engine.get_backburner_tmp()
             # pick up the xml export profile from the configuration
-            info["presetPath"] = self.execute_hook_method("settings_hook", "get_export_preset")
+            info["presetPath"] = self.execute_hook_method(
+                "settings_hook", "get_export_preset"
+            )
             # Is the movie generation for the preview foreground or background
             info["isBackground"] = self.get_setting("background_export")
 
-            self.log_debug("%s: Starting custom export session with preset '%s'" % (self, info["presetPath"]))
+            self.log_debug(
+                "%s: Starting custom export session with preset '%s'"
+                % (self, info["presetPath"])
+            )
 
         # Log usage metrics
         try:
@@ -226,14 +234,18 @@ class FlameReview(Application):
         entity_name = info["sequenceName"]
         entity_type = self.get_setting("shotgun_entity_type")
 
-        sg_data = self.shotgun.find_one(entity_type, [["code", "is", entity_name],
-                                                      ["project", "is", self.context.project]])
+        sg_data = self.shotgun.find_one(
+            entity_type,
+            [["code", "is", entity_name], ["project", "is", self.context.project]],
+        )
 
         thumbnail_entities = []
 
         try:
             if not sg_data:
-                self.engine.show_busy("Updating Shotgun...", "Creating %s %s" % (entity_type, entity_name))
+                self.engine.show_busy(
+                    "Updating Shotgun...", "Creating %s %s" % (entity_type, entity_name)
+                )
                 # Create a new item in Shotgun
                 # First see if we should assign a task template
                 # this is controlled via the app settings
@@ -243,23 +255,29 @@ class FlameReview(Application):
                 task_template_name = self.get_setting("task_template")
                 task_template = None
                 if task_template_name:
-                    task_template = self.shotgun.find_one("TaskTemplate", [["code", "is", task_template_name]])
+                    task_template = self.shotgun.find_one(
+                        "TaskTemplate", [["code", "is", task_template_name]]
+                    )
                     if not task_template:
-                        raise TankError("The task template '%s' specified in the task_template setting "
-                                        "does not exist!" % task_template_name)
+                        raise TankError(
+                            "The task template '%s' specified in the task_template setting "
+                            "does not exist!" % task_template_name
+                        )
 
-                sg_data = self.shotgun.create(entity_type, {"code": entity_name,
-                                                            "description": "Created by the Shotgun Flame integration.",
-                                                            "task_template": task_template,
-                                                            "project": self.context.project})
+                sg_data = self.shotgun.create(
+                    entity_type,
+                    {
+                        "code": entity_name,
+                        "description": "Created by the Shotgun Flame integration.",
+                        "task_template": task_template,
+                        "project": self.context.project,
+                    },
+                )
 
                 self.log_debug("Created %s" % sg_data)
 
                 thumbnail_entities.append(
-                    {
-                        "type": sg_data["type"],
-                        "id": sg_data["id"]
-                    }
+                    {"type": sg_data["type"], "id": sg_data["id"]}
                 )
 
             # now start the version creation process
@@ -271,7 +289,9 @@ class FlameReview(Application):
             else:
                 title = info["sequenceName"]
 
-            self.engine.show_busy("Updating Shotgun...", "Creating Version %s" % (title))
+            self.engine.show_busy(
+                "Updating Shotgun...", "Creating Version %s" % (title)
+            )
 
             data = {}
             data["code"] = title
@@ -296,7 +316,10 @@ class FlameReview(Application):
             data["sg_first_frame"] = 1
             data["sg_last_frame"] = info["sourceOut"] - info["sourceIn"]
             data["frame_count"] = info["sourceOut"] - info["sourceIn"]
-            data["frame_range"] = "%s-%s" % (data["sg_first_frame"], data["sg_last_frame"])
+            data["frame_range"] = "%s-%s" % (
+                data["sg_first_frame"],
+                data["sg_last_frame"],
+            )
             data["sg_frames_have_slate"] = False
             data["sg_movie_has_slate"] = False
             data["sg_frames_aspect_ratio"] = info["aspectRatio"]
@@ -311,10 +334,7 @@ class FlameReview(Application):
             self.log_debug("Created a version in Shotgun: %s" % sg_version_data)
             if self.get_setting("bypass_shotgun_transcoding"):
                 thumbnail_entities.append(
-                    {
-                        "type": sg_version_data["type"],
-                        "id": sg_version_data["id"]
-                    }
+                    {"type": sg_version_data["type"], "id": sg_version_data["id"]}
                 )
 
             full_path = os.path.join(info["destinationPath"], info["resolvedPath"])
@@ -327,7 +347,7 @@ class FlameReview(Application):
                     dependencies=dependencies,
                     target_entities=thumbnail_entities,
                     asset_info=info,
-                    favor_preview=False # No need to generate a movie file.
+                    favor_preview=False,  # No need to generate a movie file.
                 )
                 dependencies = self.engine.thumbnail_generator.finalize()
                 self.log_debug("New job dependency: %s" % dependencies)
@@ -340,18 +360,22 @@ class FlameReview(Application):
 
             # and populate UI params
 
-            backburner_job_title = "%s %s - Shotgun Upload" % (self.get_setting("shotgun_entity_type"),
-                                                               info.get("sequenceName"))
+            backburner_job_title = "%s %s - Shotgun Upload" % (
+                self.get_setting("shotgun_entity_type"),
+                info.get("sequenceName"),
+            )
             backburner_job_desc = "Creates a new version record in Shotgun and uploads the associated Quicktime."
 
             # kick off async job
-            self.engine.create_local_backburner_job(backburner_job_title,
-                                                    backburner_job_desc,
-                                                    dependencies,
-                                                    self,
-                                                    "backburner_upload_quicktime",
-                                                    args,
-                                                    info.get("destinationHost"))
+            self.engine.create_local_backburner_job(
+                backburner_job_title,
+                backburner_job_desc,
+                dependencies,
+                self,
+                "backburner_upload_quicktime",
+                args,
+                info.get("destinationHost"),
+            )
 
             # done!
             self._submission_done = True
@@ -379,12 +403,7 @@ class FlameReview(Application):
             self.log_debug("Begin upload of quicktime to Shotgun...")
             field_name = "sg_uploaded_movie"
 
-        self.shotgun.upload(
-            "Version",
-            sg_version_id,
-            full_path,
-            field_name
-        )
+        self.shotgun.upload("Version", sg_version_id, full_path, field_name)
         self.log_debug("Upload complete!")
 
         # clean up
@@ -392,8 +411,10 @@ class FlameReview(Application):
             self.log_debug("Trying to remove temporary quicktime file...")
             os.remove(full_path)
             self.log_debug("Temporary quicktime file successfully deleted.")
-        except Exception, e:
-            self.log_warning("Could not remove temporary file '%s': %s" % (full_path, e))
+        except Exception as e:
+            self.log_warning(
+                "Could not remove temporary file '%s': %s" % (full_path, e)
+            )
 
     def display_summary(self, session_id, info):
         """
@@ -412,4 +433,9 @@ class FlameReview(Application):
         """
         # pop up a UI asking the user for description
         tk_flame_review = self.import_module("tk_flame_review")
-        self.engine.show_modal("Submission Summary", self, tk_flame_review.SummaryDialog, self._submission_done)
+        self.engine.show_modal(
+            "Submission Summary",
+            self,
+            tk_flame_review.SummaryDialog,
+            self._submission_done,
+        )

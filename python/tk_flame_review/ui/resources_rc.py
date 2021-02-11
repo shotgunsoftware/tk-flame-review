@@ -3,8 +3,10 @@
 # Created by: The Resource Compiler for Qt version 5.15.2
 # WARNING! All changes made in this file will be lost!
 
-from __future__ import absolute_import
-from tank.platform.qt import QtCore
+try:
+    from tank.platform.qt import QtCore
+except ImportError:
+    from PySide2 import QtCore
 
 qt_resource_data = b"\
 \x00\x00/\x14\
@@ -6875,17 +6877,10 @@ qt_resource_struct = b"\
 \x00\x00\x01w@\xb9\xad'\
 "
 
-
 def qInitResources():
-    QtCore.qRegisterResourceData(
-        0x03, qt_resource_struct, qt_resource_name, qt_resource_data
-    )
-
+    QtCore.qRegisterResourceData(0x03, qt_resource_struct, qt_resource_name, qt_resource_data)
 
 def qCleanupResources():
-    QtCore.qUnregisterResourceData(
-        0x03, qt_resource_struct, qt_resource_name, qt_resource_data
-    )
-
+    QtCore.qUnregisterResourceData(0x03, qt_resource_struct, qt_resource_name, qt_resource_data)
 
 qInitResources()

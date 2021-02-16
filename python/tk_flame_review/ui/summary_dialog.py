@@ -1,58 +1,90 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'summary_dialog.ui'
-#
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'summary_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.15.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from tank.platform.qt import QtCore, QtGui
+try:
+    from tank.platform.qt.QtCore import *
+except ImportError:
+    from PySide2.QtCore import *
+try:
+    from tank.platform.qt.QtGui import *
+except ImportError:
+    from PySide2.QtGui import *
+try:
+    from tank.platform.qt.QtWidgets import *
+except ImportError:
+    from PySide2.QtWidgets import *
+
+from  . import resources_rc
 
 class Ui_SummaryDialog(object):
     def setupUi(self, SummaryDialog):
-        SummaryDialog.setObjectName("SummaryDialog")
+        if not SummaryDialog.objectName():
+            SummaryDialog.setObjectName(u"SummaryDialog")
         SummaryDialog.resize(501, 175)
-        self.verticalLayout = QtGui.QVBoxLayout(SummaryDialog)
+        self.verticalLayout = QVBoxLayout(SummaryDialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(20, -1, 20, -1)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.stackedWidget = QtGui.QStackedWidget(SummaryDialog)
-        self.stackedWidget.setObjectName("stackedWidget")
-        self.page = QtGui.QWidget()
-        self.page.setObjectName("page")
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.page)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.label = QtGui.QLabel(self.page)
-        self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/tk-flame-review/submission_complete.png"))
-        self.label.setObjectName("label")
+        self.stackedWidget = QStackedWidget(SummaryDialog)
+        self.stackedWidget.setObjectName(u"stackedWidget")
+        self.page = QWidget()
+        self.page.setObjectName(u"page")
+        self.verticalLayout_2 = QVBoxLayout(self.page)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.label = QLabel(self.page)
+        self.label.setObjectName(u"label")
+        self.label.setPixmap(QPixmap(u":/tk-flame-review/submission_complete.png"))
+
         self.verticalLayout_2.addWidget(self.label)
+
         self.stackedWidget.addWidget(self.page)
-        self.page_2 = QtGui.QWidget()
-        self.page_2.setObjectName("page_2")
-        self.verticalLayout_3 = QtGui.QVBoxLayout(self.page_2)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.label_2 = QtGui.QLabel(self.page_2)
-        self.label_2.setText("")
-        self.label_2.setPixmap(QtGui.QPixmap(":/tk-flame-review/submission_failed.png"))
-        self.label_2.setObjectName("label_2")
+        self.page_2 = QWidget()
+        self.page_2.setObjectName(u"page_2")
+        self.verticalLayout_3 = QVBoxLayout(self.page_2)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.label_2 = QLabel(self.page_2)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setPixmap(QPixmap(u":/tk-flame-review/submission_failed.png"))
+
         self.verticalLayout_3.addWidget(self.label_2)
+
         self.stackedWidget.addWidget(self.page_2)
+
         self.verticalLayout.addWidget(self.stackedWidget)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtGui.QSpacerItem(368, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
-        self.submit = QtGui.QPushButton(SummaryDialog)
-        self.submit.setObjectName("submit")
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalSpacer = QSpacerItem(368, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.submit = QPushButton(SummaryDialog)
+        self.submit.setObjectName(u"submit")
+
         self.horizontalLayout.addWidget(self.submit)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout)
 
+
         self.retranslateUi(SummaryDialog)
+
         self.stackedWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(SummaryDialog)
+
+
+        QMetaObject.connectSlotsByName(SummaryDialog)
+    # setupUi
 
     def retranslateUi(self, SummaryDialog):
-        SummaryDialog.setWindowTitle(QtGui.QApplication.translate("SummaryDialog", "Submit to Shotgun", None, QtGui.QApplication.UnicodeUTF8))
-        self.submit.setText(QtGui.QApplication.translate("SummaryDialog", "Ok", None, QtGui.QApplication.UnicodeUTF8))
+        SummaryDialog.setWindowTitle(QCoreApplication.translate("SummaryDialog", u"Submit to Shotgun", None))
+        self.label.setText("")
+        self.label_2.setText("")
+        self.submit.setText(QCoreApplication.translate("SummaryDialog", u"Ok", None))
+    # retranslateUi
 
-from . import resources_rc

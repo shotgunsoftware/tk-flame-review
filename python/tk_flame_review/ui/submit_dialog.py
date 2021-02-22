@@ -26,36 +26,36 @@ from  . import resources_rc
 class Ui_SubmitDialog(object):
     def setupUi(self, SubmitDialog):
         if not SubmitDialog.objectName():
-            SubmitDialog.setObjectName(u"SubmitDialog")
+            SubmitDialog.setObjectName("SubmitDialog")
         SubmitDialog.resize(475, 559)
         self.verticalLayout = QVBoxLayout(SubmitDialog)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setObjectName("verticalLayout")
         self.verticalLayout.setContentsMargins(20, -1, 20, -1)
         self.label = QLabel(SubmitDialog)
-        self.label.setObjectName(u"label")
-        self.label.setPixmap(QPixmap(u":/tk-flame-review/ui_splash.png"))
+        self.label.setObjectName("label")
+        self.label.setPixmap(QPixmap(":/tk-flame-review/ui_splash.png"))
 
         self.verticalLayout.addWidget(self.label)
 
         self.comments = QPlainTextEdit(SubmitDialog)
-        self.comments.setObjectName(u"comments")
+        self.comments.setObjectName("comments")
         self.comments.setMinimumSize(QSize(300, 100))
 
         self.verticalLayout.addWidget(self.comments)
 
         self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.horizontalSpacer = QSpacerItem(368, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
         self.cancel = QPushButton(SubmitDialog)
-        self.cancel.setObjectName(u"cancel")
+        self.cancel.setObjectName("cancel")
 
         self.horizontalLayout.addWidget(self.cancel)
 
         self.submit = QPushButton(SubmitDialog)
-        self.submit.setObjectName(u"submit")
+        self.submit.setObjectName("submit")
 
         self.horizontalLayout.addWidget(self.submit)
 
@@ -71,9 +71,9 @@ class Ui_SubmitDialog(object):
     # setupUi
 
     def retranslateUi(self, SubmitDialog):
-        SubmitDialog.setWindowTitle(QCoreApplication.translate("SubmitDialog", u"Submit to Shotgun", None))
+        SubmitDialog.setWindowTitle(QCoreApplication.translate("SubmitDialog", "Submit to Shotgun", None))
         self.label.setText("")
-        self.cancel.setText(QCoreApplication.translate("SubmitDialog", u"Cancel", None))
-        self.submit.setText(QCoreApplication.translate("SubmitDialog", u"Submit to Shotgun", None))
+        self.cancel.setText(QCoreApplication.translate("SubmitDialog", "Cancel", None))
+        self.submit.setText(QCoreApplication.translate("SubmitDialog", "Submit to Shotgun", None))
     # retranslateUi
 

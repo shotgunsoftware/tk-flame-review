@@ -268,7 +268,7 @@ class FlameReview(Application):
                     entity_type,
                     {
                         "code": entity_name,
-                        "description": "Created by the Shotgun Flame integration.",
+                        "description": "Created by the SG Flame integration.",
                         "task_template": task_template,
                         "project": self.context.project,
                     },
@@ -281,7 +281,7 @@ class FlameReview(Application):
                 )
 
             # now start the version creation process
-            self.log_debug("Will associate upload with Shotgun entity %s..." % sg_data)
+            self.log_debug("Will associate upload with SG entity %s..." % sg_data)
 
             # create a version in Shotgun
             if info["versionNumber"] != 0:
@@ -360,11 +360,11 @@ class FlameReview(Application):
 
             # and populate UI params
 
-            backburner_job_title = "%s %s - Shotgun Upload" % (
+            backburner_job_title = "%s %s - SG Upload" % (
                 self.get_setting("shotgun_entity_type"),
                 info.get("sequenceName"),
             )
-            backburner_job_desc = "Creates a new version record in Shotgun and uploads the associated Quicktime."
+            backburner_job_desc = "Creates a new version record in SG and uploads the associated Quicktime."
 
             # kick off async job
             self.engine.create_local_backburner_job(
@@ -391,7 +391,7 @@ class FlameReview(Application):
         if not os.path.exists(full_path):
             raise TankError("Cannot find quicktime '%s'! Aborting upload." % full_path)
 
-        self.log_debug("Begin Shotgun processing for %s..." % full_path)
+        self.log_debug("Begin SG processing for %s..." % full_path)
         self.log_debug("File size is %s bytes." % os.path.getsize(full_path))
 
         # upload quicktime to Shotgun

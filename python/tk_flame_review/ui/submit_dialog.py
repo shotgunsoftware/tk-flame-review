@@ -71,9 +71,9 @@ class Ui_SubmitDialog(object):
     # setupUi
 
     def retranslateUi(self, SubmitDialog):
-        SubmitDialog.setWindowTitle(QCoreApplication.translate("SubmitDialog", "Submit to Shotgun", None))
+        SubmitDialog.setWindowTitle(QCoreApplication.translate("SubmitDialog", "Submit to ShotGrid", None))
         self.label.setText("")
         self.cancel.setText(QCoreApplication.translate("SubmitDialog", "Cancel", None))
-        self.submit.setText(QCoreApplication.translate("SubmitDialog", "Submit to Shotgun", None))
+        self.submit.setText(QCoreApplication.translate("SubmitDialog", "Submit to ShotGrid", None))
     # retranslateUi
 

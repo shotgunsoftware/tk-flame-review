@@ -82,7 +82,7 @@ class Ui_SummaryDialog(object):
     # setupUi
 
     def retranslateUi(self, SummaryDialog):
-        SummaryDialog.setWindowTitle(QCoreApplication.translate("SummaryDialog", "Submit to Shotgun", None))
+        SummaryDialog.setWindowTitle(QCoreApplication.translate("SummaryDialog", "Submit to ShotGrid", None))
         self.label.setText("")
         self.label_2.setText("")
         self.submit.setText(QCoreApplication.translate("SummaryDialog", "Ok", None))

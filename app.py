@@ -24,7 +24,7 @@ class FlameReview(Application):
     """
     Review functionality to automate and streamline sequence review out of Flame.
 
-    Generates quicktimes for the selected Flame sequences and uploads these to Shotgun.
+    Generates quicktimes for the selected Flame sequences and uploads these to ShotGrid.
     """
 
     def init_app(self):
@@ -173,9 +173,9 @@ class FlameReview(Application):
         """
         Flame hook called when an item has been exported.
 
-        It method create shotgun entities and create a job to upload the file.
+        It method create ShotGrid entities and create a job to upload the file.
 
-        - creates a Shotgun sequence (with task templates) if this doesn't exist
+        - creates a ShotGrid sequence (with task templates) if this doesn't exist
         - creates a version and links it up with the sequence
 
         :param session_id: String which identifies which export session is being referred to.
@@ -230,7 +230,7 @@ class FlameReview(Application):
         else:
             dependencies = None
 
-        # ensure that the entity exists in Shotgun
+        # ensure that the entity exists in ShotGrid
         entity_name = info["sequenceName"]
         entity_type = self.get_setting("shotgun_entity_type")
 
@@ -244,14 +244,14 @@ class FlameReview(Application):
         try:
             if not sg_data:
                 self.engine.show_busy(
-                    "Updating Shotgun...", "Creating %s %s" % (entity_type, entity_name)
+                    "Updating ShotGrid...", "Creating %s %s" % (entity_type, entity_name)
                 )
-                # Create a new item in Shotgun
+                # Create a new item in ShotGrid
                 # First see if we should assign a task template
                 # this is controlled via the app settings
                 # if no task template is specified in the settings,
                 # the item will be created without tasks.
-                self.log_debug("Creating a new item in Shotgun...")
+                self.log_debug("Creating a new item in ShotGrid...")
                 task_template_name = self.get_setting("task_template")
                 task_template = None
                 if task_template_name:
@@ -268,7 +268,7 @@ class FlameReview(Application):
                     entity_type,
                     {
                         "code": entity_name,
-                        "description": "Created by the Shotgun Flame integration.",
+                        "description": "Created by the ShotGrid Flame integration.",
                         "task_template": task_template,
                         "project": self.context.project,
                     },
@@ -281,16 +281,16 @@ class FlameReview(Application):
                 )
 
             # now start the version creation process
-            self.log_debug("Will associate upload with Shotgun entity %s..." % sg_data)
+            self.log_debug("Will associate upload with ShotGrid entity %s..." % sg_data)
 
-            # create a version in Shotgun
+            # create a version in ShotGrid
             if info["versionNumber"] != 0:
                 title = "%s v%03d" % (info["sequenceName"], info["versionNumber"])
             else:
                 title = info["sequenceName"]
 
             self.engine.show_busy(
-                "Updating Shotgun...", "Creating Version %s" % (title)
+                "Updating ShotGrid...", "Creating Version %s" % (title)
             )
 
             data = {}
@@ -311,7 +311,7 @@ class FlameReview(Application):
             # frame range 100-111, it corresponds to the frames
             # 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110
             #
-            # We transform the above frame range (100-111) to be 1-10 in Shotgun with length 10.
+            # We transform the above frame range (100-111) to be 1-10 in ShotGrid with length 10.
             #
             data["sg_first_frame"] = 1
             data["sg_last_frame"] = info["sourceOut"] - info["sourceIn"]
@@ -331,7 +331,7 @@ class FlameReview(Application):
 
             sg_version_data = self.shotgun.create("Version", data)
 
-            self.log_debug("Created a version in Shotgun: %s" % sg_version_data)
+            self.log_debug("Created a version in ShotGrid: %s" % sg_version_data)
             if self.get_setting("bypass_shotgun_transcoding"):
                 thumbnail_entities.append(
                     {"type": sg_version_data["type"], "id": sg_version_data["id"]}
@@ -340,7 +340,7 @@ class FlameReview(Application):
             full_path = os.path.join(info["destinationPath"], info["resolvedPath"])
 
             if len(thumbnail_entities) > 0:
-                self.engine.show_busy("Updating Shotgun...", "Generating thumbnail")
+                self.engine.show_busy("Updating ShotGrid...", "Generating thumbnail")
                 self.engine.thumbnail_generator.generate(
                     display_name=title,
                     path=full_path,
@@ -352,7 +352,7 @@ class FlameReview(Application):
                 dependencies = self.engine.thumbnail_generator.finalize()
                 self.log_debug("New job dependency: %s" % dependencies)
 
-            self.engine.show_busy("Updating Shotgun...", "Preparing background job")
+            self.engine.show_busy("Updating ShotGrid...", "Preparing background job")
 
             # set up the arguments which we will pass (via backburner) to
             # the target method which gets executed
@@ -360,11 +360,11 @@ class FlameReview(Application):
 
             # and populate UI params
 
-            backburner_job_title = "%s %s - Shotgun Upload" % (
+            backburner_job_title = "%s %s - ShotGrid Upload" % (
                 self.get_setting("shotgun_entity_type"),
                 info.get("sequenceName"),
             )
-            backburner_job_desc = "Creates a new version record in Shotgun and uploads the associated Quicktime."
+            backburner_job_desc = "Creates a new version record in ShotGrid and uploads the associated Quicktime."
 
             # kick off async job
             self.engine.create_local_backburner_job(
@@ -391,16 +391,16 @@ class FlameReview(Application):
         if not os.path.exists(full_path):
             raise TankError("Cannot find quicktime '%s'! Aborting upload." % full_path)
 
-        self.log_debug("Begin Shotgun processing for %s..." % full_path)
+        self.log_debug("Begin ShotGrid processing for %s..." % full_path)
         self.log_debug("File size is %s bytes." % os.path.getsize(full_path))
 
-        # upload quicktime to Shotgun
+        # upload quicktime to ShotGrid
         if self.get_setting("bypass_shotgun_transcoding"):
-            self.log_debug("Begin upload of explicit mp4 quicktime to Shotgun...")
+            self.log_debug("Begin upload of explicit mp4 quicktime to ShotGrid...")
             field_name = "sg_uploaded_movie_mp4"
 
         else:
-            self.log_debug("Begin upload of quicktime to Shotgun...")
+            self.log_debug("Begin upload of quicktime to ShotGrid...")
             field_name = "sg_uploaded_movie"
 
         self.shotgun.upload("Version", sg_version_id, full_path, field_name)

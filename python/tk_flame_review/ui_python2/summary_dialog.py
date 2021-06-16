@@ -58,7 +58,7 @@ class Ui_SummaryDialog(object):
         SummaryDialog.setWindowTitle(
             QtGui.QApplication.translate(
                 "SummaryDialog",
-                "Submit to Shotgun",
+                "Submit to ShotGrid",
                 None,
                 QtGui.QApplication.UnicodeUTF8,
             )

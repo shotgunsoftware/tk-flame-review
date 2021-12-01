@@ -11,15 +11,24 @@
 try:
     from tank.platform.qt.QtCore import *
 except ImportError:
-    from PySide2.QtCore import *
+    try:
+        from PySide2.QtCore import *
+    except ImportError:
+        from PySide.QtCore import *
 try:
     from tank.platform.qt.QtGui import *
 except ImportError:
-    from PySide2.QtGui import *
+    try:
+        from PySide2.QtGui import *
+    except ImportError:
+        from PySide.QtGui import *
 try:
     from tank.platform.qt.QtWidgets import *
 except ImportError:
-    from PySide2.QtWidgets import *
+    try:
+        from PySide2.QtWidgets import *
+    except ImportError:
+        pass
 
 from  . import resources_rc
 

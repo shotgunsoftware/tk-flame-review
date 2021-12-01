@@ -244,7 +244,8 @@ class FlameReview(Application):
         try:
             if not sg_data:
                 self.engine.show_busy(
-                    "Updating ShotGrid...", "Creating %s %s" % (entity_type, entity_name)
+                    "Updating ShotGrid...",
+                    "Creating %s %s" % (entity_type, entity_name),
                 )
                 # Create a new item in ShotGrid
                 # First see if we should assign a task template

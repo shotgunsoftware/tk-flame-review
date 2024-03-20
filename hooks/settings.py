@@ -19,7 +19,7 @@ HookBaseClass = sgtk.get_hook_baseclass()
 class ExportSettings(HookBaseClass):
     """
     This hook controls the settings that Flame will use when it exports the quicktimes
-    prior to uploading them to ShotGrid. It also lets a user control where on disk temporary
+    prior to uploading them to Flow Production Tracking. It also lets a user control where on disk temporary
     quicktime files will be located.
     """
 

@@ -1,0 +1,13 @@
+# YAML Configuration File for Qt Resource Building
+#
+# See tk-toolchain doc...
+
+
+- ui_src: resources
+  ui_files:
+    - submit_dialog
+    - summary_dialog
+  res_files:
+    - resources
+  py_dest: python/tk_flame_review/ui
+  import_pattern: sgtk.platform.qt

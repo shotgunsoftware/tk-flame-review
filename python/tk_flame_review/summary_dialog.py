@@ -13,10 +13,7 @@ import sys
 import sgtk
 from sgtk.platform.qt import QtCore, QtGui
 
-if sys.version_info.major == 2:
-    from .ui_python2.summary_dialog import Ui_SummaryDialog
-else:
-    from .ui.summary_dialog import Ui_SummaryDialog
+from .ui.summary_dialog import Ui_SummaryDialog
 
 
 class SummaryDialog(QtGui.QWidget):

@@ -12,7 +12,6 @@
 Flame app to send sequences to review.
 """
 
-from __future__ import absolute_import
 import os
 import uuid
 

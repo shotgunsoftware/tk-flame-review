@@ -78,7 +78,7 @@ class FlameReview(Application):
 
         # pop up a UI asking the user for description
         tk_flame_review = self.import_module("tk_flame_review")
-        (return_code, widget) = self.engine.show_modal(
+        return_code, widget = self.engine.show_modal(
             "Submit for Review", self, tk_flame_review.SubmitDialog
         )
 

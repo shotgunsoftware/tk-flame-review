@@ -67,6 +67,7 @@ description: "Sends sequences in Flame to Flow Production Tracking Review."
 requires_shotgun_version:
 requires_core_version: "v0.18.45"
 requires_engine_version: "v1.14.3"
+minimum_python_version: "3.9"
 
 # the frameworks required to run this app
 frameworks:
